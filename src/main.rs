@@ -1,6 +1,8 @@
 use axum::Router;
+use tracing::info;
 
 use crate::days::day0::get_day_0_router;
+use crate::days::day1::get_day_1_router;
 
 mod days;
 
