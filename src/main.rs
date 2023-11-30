@@ -1,19 +1,12 @@
-use axum::http::StatusCode;
-use axum::{routing::get, Router};
+use axum::Router;
 
-async fn hello_world() -> (StatusCode, &'static str) {
-    (StatusCode::OK, "Hello, world!")
-}
+use crate::days::day0::get_day_0_router;
 
-async fn error() -> StatusCode {
-    StatusCode::INTERNAL_SERVER_ERROR
-}
+mod days;
 
 #[shuttle_runtime::main]
 async fn main() -> shuttle_axum::ShuttleAxum {
-    let router = Router::new()
-        .route("/", get(hello_world))
-        .route("/-1/error", get(error));
+    let router = Router::new().merge(get_day_0_router());
 
     Ok(router.into())
 }
