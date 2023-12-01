@@ -28,10 +28,24 @@ if [ "$DAY" -eq 0 ]; then
 
   echo -e "\n\n### 2nd endpoint"
   curl -i -X GET "$URL/-1/error"
+
 elif [ "$DAY" -eq 1 ]; then
   echo -e "### 1st endpoint"
-  curl -i -X GET "$URL/okok"
+  curl -i -X GET "$URL/1/4/8"
+
+  result=$(curl -i -X GET "$URL/1/4/8" 2>/dev/null)
+  if [[ "$result" != *"1728"* ]]; then
+    echo -e "[ERROR] ########## The result is supposed to be 1728 ########## "
+  fi
 
   echo -e "\n\n### 2nd endpoint"
-  curl -i -X GET "$URL/ko"
+  curl -X GET "$URL/1/4/8/10"
+  result=$(curl -i -X GET "$URL/1/4/8/10" 2>/dev/null)
+  if [[ "$result" != *"216"* ]]; then
+    echo -e "[ERROR] ########## The result is supposed to be 216 ########## "
+  fi
 fi
+
+
+
+echo -e "\nFin test endpoints for day $DAY\n"
