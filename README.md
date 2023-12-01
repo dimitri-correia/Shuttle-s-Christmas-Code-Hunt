@@ -17,3 +17,5 @@ see here https://console.shuttle.rs/cch
 
 #### Day -1: Get your winter boots on!
 
+#### Day 1: Packet "exclusive-cube" not found
+

@@ -10,7 +10,7 @@ mod days;
 async fn main() -> shuttle_axum::ShuttleAxum {
     let router = Router::new()
         .merge(get_day_0_router())
-        .merge(get_day_1_router());
+        .nest("/1", get_day_1_router());
 
     info!("App ok");
 
