@@ -19,3 +19,6 @@ see here https://console.shuttle.rs/cch
 
 #### Day 1: Packet "exclusive-cube" not found
 
+### Day 2 and 3 doesn't exists due to an issue on shuttle servers side
+
+#### Day 4: What do you call a serialized reindeer? Serdeer!
