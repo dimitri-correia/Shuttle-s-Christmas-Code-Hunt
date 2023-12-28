@@ -2,9 +2,9 @@ use axum::http::{StatusCode, Uri};
 use axum::Router;
 use tracing::info;
 
-use crate::days::day0::get_day_0_router;
-use crate::days::day1::get_day_1_router;
-use crate::days::day4::get_day_4_router;
+use crate::days::day00::get_day_0_router;
+use crate::days::day01::get_day_1_router;
+use crate::days::day04::get_day_4_router;
 
 mod days;
 

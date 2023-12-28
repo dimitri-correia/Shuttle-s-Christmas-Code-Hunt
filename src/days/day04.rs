@@ -43,6 +43,12 @@ async fn strength(Json(reindeer_list): Json<Vec<ReindeerSimple>>) -> (StatusCode
         .sum();
     (StatusCode::OK, sum.to_string())
 }
+// {
+//   "fastest": "Speeding past the finish line with a strength of 5 is Dasher",
+//   "tallest": "Dasher is standing tall with his 36 cm wide antlers",
+//   "magician": "Dasher could blast you away with a snow magic power of 9001",
+//   "consumer": "Dancer ate lots of candies, but also some grass"
+// }
 
 async fn contest(Json(reindeer_list): Json<Vec<Reindeer>>) -> Json<ContestResult> {
     let fastest = get_reindeer_result(&reindeer_list, |r| r.speed, "speeding past the finish line");
