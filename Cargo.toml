@@ -14,3 +14,4 @@ ordered-float = "4.2.0"
 
 [dev-dependencies]
 cch23-validator = "22.0.0"
+axum-test = "14.0.0"
