@@ -5,6 +5,7 @@ use tracing::info;
 use crate::days::day00::get_day_0_router;
 use crate::days::day01::get_day_1_router;
 use crate::days::day04::get_day_4_router;
+use crate::days::day05::get_day_5_router;
 
 mod days;
 
@@ -14,6 +15,7 @@ async fn main() -> shuttle_axum::ShuttleAxum {
         .merge(get_day_0_router())
         .nest("/1", get_day_1_router())
         .nest("/4", get_day_4_router())
+        .nest("/5", get_day_5_router())
         .fallback(fallback);
 
     info!("App ok");
