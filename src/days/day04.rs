@@ -18,7 +18,6 @@ struct Reindeer {
 }
 #[derive(Deserialize, Debug)]
 struct ReindeerSimple {
-    name: String,
     strength: u32,
 }
 
@@ -43,25 +42,27 @@ async fn strength(Json(reindeer_list): Json<Vec<ReindeerSimple>>) -> (StatusCode
         .sum();
     (StatusCode::OK, sum.to_string())
 }
-// {
-//   "fastest": "Speeding past the finish line with a strength of 5 is Dasher",
-//   "tallest": "Dasher is standing tall with his 36 cm wide antlers",
-//   "magician": "Dasher could blast you away with a snow magic power of 9001",
-//   "consumer": "Dancer ate lots of candies, but also some grass"
-// }
 
 async fn contest(Json(reindeer_list): Json<Vec<Reindeer>>) -> Json<ContestResult> {
-    let fastest = get_reindeer_result(&reindeer_list, |r| r.speed, "speeding past the finish line");
-    let tallest = get_reindeer_result(&reindeer_list, |r| r.height, "standing tall with");
-    let magician = get_reindeer_result(
-        &reindeer_list,
-        |r| r.snow_magic_power,
-        "could blast you away with snow magic power",
+    let fastest = get_reindeer_result(&reindeer_list, |r| r.speed);
+    let fastest = format!(
+        "Speeding past the finish line with a strength of {} is {}",
+        fastest.strength, fastest.name
     );
-    let consumer = get_reindeer_result(
-        &reindeer_list,
-        |r| r.candies_eaten_yesterday,
-        "ate lots of candies, but also some grass",
+    let tallest = get_reindeer_result(&reindeer_list, |r| r.height);
+    let tallest = format!(
+        "{} is standing tall with his {} cm wide antlers",
+        tallest.name, tallest.antler_width
+    );
+    let magician = get_reindeer_result(&reindeer_list, |r| r.snow_magic_power);
+    let magician = format!(
+        "{} could blast you away with a snow magic power of {}",
+        magician.name, magician.snow_magic_power
+    );
+    let consumer = get_reindeer_result(&reindeer_list, |r| r.candies_eaten_yesterday);
+    let consumer = format!(
+        "{} ate lots of candies, but also some {}",
+        consumer.name, consumer.favorite_food
     );
 
     Json(ContestResult {
@@ -72,21 +73,14 @@ async fn contest(Json(reindeer_list): Json<Vec<Reindeer>>) -> Json<ContestResult
     })
 }
 
-fn get_reindeer_result<F>(reindeer_list: &[Reindeer], key_fn: F, description: &str) -> String
+fn get_reindeer_result<F>(reindeer_list: &[Reindeer], key_fn: F) -> &Reindeer
 where
     F: Fn(&Reindeer) -> f32,
 {
-    let winner = reindeer_list
+    reindeer_list
         .iter()
         .max_by_key(|&r| OrderedFloat(key_fn(r)))
-        .unwrap();
-
-    format!(
-        "{} with a {} of {}",
-        winner.name,
-        description,
-        key_fn(winner)
-    )
+        .unwrap()
 }
 
 pub fn get_day_4_router() -> Router {
