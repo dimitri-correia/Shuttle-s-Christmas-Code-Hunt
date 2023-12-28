@@ -252,25 +252,25 @@ version = "14.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "56ac99db40006a1a3fffeb381f2a78cb341dbc99d07b561e8bd119e22a2b1b0f"
 dependencies = [
-    "anyhow",
-    "async-trait",
-    "auto-future",
-    "axum 0.7.2",
-    "bytes",
-    "cookie",
-    "http 1.0.0",
-    "http-body-util",
-    "hyper 1.0.1",
-    "hyper-util",
-    "pretty_assertions",
-    "reserve-port",
-    "serde",
-    "serde_json",
-    "serde_urlencoded",
-    "smallvec",
-    "tokio",
-    "tower",
-    "url",
+ "anyhow",
+ "async-trait",
+ "auto-future",
+ "axum 0.7.2",
+ "bytes",
+ "cookie",
+ "http 1.0.0",
+ "http-body-util",
+ "hyper 1.0.1",
+ "hyper-util",
+ "pretty_assertions",
+ "reserve-port",
+ "serde",
+ "serde_json",
+ "serde_urlencoded",
+ "smallvec",
+ "tokio",
+ "tower",
+ "url",
 ]
 
 [[package]]
@@ -347,10 +347,11 @@ name = "cch23-dcorreia"
 version = "0.1.0"
 dependencies = [
  "axum 0.7.2",
-    "axum-test",
+ "axum-test",
  "cch23-validator",
  "ordered-float",
  "serde",
+ "serde_json",
  "shuttle-axum",
  "shuttle-runtime",
  "tokio",
@@ -472,8 +473,8 @@ version = "0.18.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "3cd91cf61412820176e137621345ee43b3f4423e589e7ae4e50d601d93e35ef8"
 dependencies = [
-    "time",
-    "version_check",
+ "time",
+ "version_check",
 ]
 
 [[package]]
@@ -966,7 +967,7 @@ dependencies = [
  "itoa",
  "pin-project-lite",
  "tokio",
-    "want",
+ "want",
 ]
 
 [[package]]
@@ -1504,8 +1505,8 @@ version = "1.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "af7cee1a6c8a5b9208b3cb1061f10c0cb689087b3d8ce85fb9d2dd7a29b6ba66"
 dependencies = [
-    "diff",
-    "yansi",
+ "diff",
+ "yansi",
 ]
 
 [[package]]
@@ -1737,8 +1738,8 @@ version = "2.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "3969e7fe15c6c1532ba1a761628298e870bbd18c252fd41a58445f6091c372a0"
 dependencies = [
-    "lazy_static",
-    "thiserror",
+ "lazy_static",
+ "thiserror",
 ]
 
 [[package]]
