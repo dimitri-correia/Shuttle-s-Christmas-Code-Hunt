@@ -10,6 +10,7 @@ use crate::days::day06::get_day_6_router;
 use crate::days::day07::get_day_7_router;
 use crate::days::day08::get_day_8_router;
 use crate::days::day11::get_day_11_router;
+use crate::days::day12::get_day_12_router;
 
 mod days;
 
@@ -24,6 +25,7 @@ async fn main() -> shuttle_axum::ShuttleAxum {
         .nest("/7", get_day_7_router())
         .nest("/8", get_day_8_router())
         .nest("/11", get_day_11_router())
+        .nest("/12", get_day_12_router())
         .fallback(fallback);
 
     info!("App ok");
