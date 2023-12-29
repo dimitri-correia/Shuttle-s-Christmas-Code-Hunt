@@ -51,20 +51,32 @@ async fn bake(jar: CookieJar) -> Json<BakeResult> {
     let cookies = bake_instructions
         .recipe
         .iter()
-        .map(|(item, qtt)| bake_instructions.pantry.get(item).unwrap_or(&0_usize) / qtt)
+        .filter_map(|(item, qtt)| {
+            if qtt > &0 {
+                Some(bake_instructions.pantry.get(item).unwrap_or(&0_usize) / qtt)
+            } else {
+                None
+            }
+        })
         .min()
         .unwrap();
 
-    let pantry = bake_instructions
-        .pantry
-        .iter()
-        .map(|(item, qtt)| {
-            (
-                item.clone(),
-                qtt - cookies * bake_instructions.recipe.get(item).unwrap_or(&0_usize),
-            )
-        })
-        .collect::<Ingredients>();
+    let pantry = if cookies == 0 {
+        bake_instructions.pantry
+    } else {
+        bake_instructions
+            .pantry
+            .iter()
+            .map(|(item, qtt)| {
+                (
+                    item.clone(),
+                    qtt - cookies * bake_instructions.recipe.get(item).unwrap_or(&0_usize),
+                )
+            })
+            .collect::<Ingredients>()
+    };
+
+    dbg!(&cookies, &pantry);
 
     Json(BakeResult { cookies, pantry })
 }
@@ -125,6 +137,33 @@ mod tests {
             "butter": 2002,
             "baking powder": 825,
             "chocolate chips": 257
+          }
+        }));
+    }
+
+    #[tokio::test]
+    async fn task3() {
+        let app = get_day_7_router();
+
+        // Run the application for testing.
+        let server = TestServer::new(app).unwrap();
+
+        // Send the request.
+        let response = server
+            .get("/bake")
+            .add_cookie(Cookie::new(
+                "recipe",
+                "eyJyZWNpcGUiOnsic2xpbWUiOjl9LCJwYW50cnkiOnsiY29iYmxlc3RvbmUiOjY0LCJzdGljayI6IDR9fQ==",
+            ))
+            .await;
+
+        response.assert_status(StatusCode::OK);
+
+        response.assert_json(&json!({
+          "cookies": 0,
+          "pantry": {
+            "cobblestone": 64,
+            "stick": 4
           }
         }));
     }
