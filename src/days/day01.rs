@@ -17,7 +17,7 @@ async fn cube_the_bits(Path(l_nums): Path<String>) -> (StatusCode, String) {
 
     info!(res);
 
-    (StatusCode::OK, format!("{res}"))
+    (StatusCode::OK, res.to_string())
 }
 
 #[cfg(test)]
