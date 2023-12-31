@@ -1,5 +1,6 @@
 use axum::http::{StatusCode, Uri};
 use axum::Router;
+use sqlx::PgPool;
 use tracing::info;
 
 use crate::days::day00::get_day_0_router;
@@ -11,11 +12,16 @@ use crate::days::day07::get_day_7_router;
 use crate::days::day08::get_day_8_router;
 use crate::days::day11::get_day_11_router;
 use crate::days::day12::get_day_12_router;
+use crate::days::day13::get_day_13_router;
+use crate::db::structs::MyState;
 
 mod days;
+mod db;
 
 #[shuttle_runtime::main]
-async fn main() -> shuttle_axum::ShuttleAxum {
+async fn main(#[shuttle_shared_db::Postgres] pool: PgPool) -> shuttle_axum::ShuttleAxum {
+    let db = init_db(pool).await;
+
     let router = Router::new()
         .merge(get_day_0_router())
         .nest("/1", get_day_1_router())
@@ -26,11 +32,18 @@ async fn main() -> shuttle_axum::ShuttleAxum {
         .nest("/8", get_day_8_router())
         .nest("/11", get_day_11_router())
         .nest("/12", get_day_12_router())
+        .nest("/13", get_day_13_router(db))
         .fallback(fallback);
 
     info!("App ok");
 
     Ok(router.into())
+}
+
+async fn init_db(pool: PgPool) -> MyState {
+    sqlx::migrate!().run(&pool).await.unwrap();
+
+    MyState { pool }
 }
 
 async fn fallback(uri: Uri) -> (StatusCode, String) {

@@ -20,6 +20,8 @@ image = "0.24.7"
 ulid = "1.1.0"
 uuid = "1.6.1"
 chrono = "0.4.31"
+shuttle-shared-db = { version = "0.35.2", features = ["postgres-rustls"] }
+sqlx = { version = "0.7.3", features = ["runtime-tokio-native-tls", "postgres"] }
 
 [dev-dependencies]
 cch23-validator = "22.0.0"
