@@ -40,6 +40,7 @@ fn is_magical_red() -> fn(&(u32, u32, Rgba<u8>)) -> bool {
 #[cfg(test)]
 mod tests {
     use axum::http::StatusCode;
+    use axum_test::multipart::{MultipartForm, Part};
     use axum_test::TestServer;
 
     use super::*;
@@ -71,26 +72,23 @@ mod tests {
         );
     }
 
-    // TODO not yet possible see https://github.com/JosephLenton/axum-test/issues/51
-    // #[tokio::test]
-    // async fn task2() {
-    //     let app = get_day_11_router();
-    //
-    //     // Run the application for testing.
-    //     let server = TestServer::new(app).unwrap();
-    //
-    //     // Send the request.
-    //     let form = Form::new().part(
-    //         "image",
-    //         Part::bytes(include_bytes!("../../assets/decoration.png").as_slice())
-    //             .file_name("decoration.png")
-    //             .mime_str("image/png")
-    //             .unwrap(),
-    //     );
-    //     let response = server.post("/red_pixels").multipart(form).await;
-    //
-    //     response.assert_status(StatusCode::OK);
-    //
-    //     //73034
-    // }
+    #[tokio::test]
+    async fn task2() {
+        let app = get_day_11_router();
+
+        // Run the application for testing.
+        let server = TestServer::new(app).unwrap();
+
+        // Send the request.
+        let multipart: MultipartForm = MultipartForm::new().add_part(
+            "image",
+            Part::bytes(include_bytes!("../../assets/decoration.png").as_slice())
+                .file_name("decoration.png"),
+        );
+        let response = server.post("/red_pixels").multipart(multipart).await;
+
+        response.assert_status(StatusCode::OK);
+
+        response.assert_text(73034.to_string());
+    }
 }
