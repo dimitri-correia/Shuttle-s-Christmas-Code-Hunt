@@ -4,8 +4,8 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-axum = { version = "0.7.2", features = ["multipart"] }
-axum-extra = { version = "0.9.0", features = ["cookie"] }
+axum = { version = "0.7.3", features = ["multipart"] }
+axum-extra = { version = "0.9.1", features = ["cookie"] }
 shuttle-axum = { version = "0.35.2", default-features = false, features = ["axum-0-7"] }
 shuttle-runtime = "0.35.2"
 tokio = "1.35.1"
@@ -25,4 +25,4 @@ sqlx = { version = "0.7.3", features = ["runtime-tokio-native-tls", "postgres"] 
 
 [dev-dependencies]
 cch23-validator = "22.0.0"
-axum-test = "14.0.0"
+axum-test = "14.2.1"
