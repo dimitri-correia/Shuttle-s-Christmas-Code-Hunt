@@ -27,10 +27,7 @@ fn html_boilerplate(html: String) -> String {
 }
 
 async fn unsafe_rendering(Json(payload): Json<SimpleBody>) -> String {
-    dbg!(&payload.content);
-    let string = html_boilerplate(payload.content);
-    dbg!(&string);
-    string
+    html_boilerplate(payload.content)
 }
 
 async fn safe_rendering(Json(payload): Json<SimpleBody>) -> String {
