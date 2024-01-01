@@ -1,9 +1,14 @@
+use serde_json::Value;
 use sqlx::Row;
 
 use crate::db::structs::{MyState, Order};
 
 pub async fn reset(db: MyState) {
     sqlx::query(include_str!("../../migrations/1_schema.sql"))
+        .execute(&db.pool)
+        .await
+        .unwrap();
+    sqlx::query(include_str!("../../migrations/2_schema.sql"))
         .execute(&db.pool)
         .await
         .unwrap();
@@ -34,13 +39,12 @@ pub async fn get_number_order(db: MyState) -> i64 {
     }
 }
 
-pub async fn get_most_popular_order(db: MyState) -> String {
-    // match sqlx::query("SELECT MAX(quantity) FROM orders")
-    //     .fetch_one(&db.pool)
-    //     .await
-    // {
-    //     Ok(row) => row.get::<str, _>("max").to_string(),
-    //     Err(_) => "null".to_string(),
-    // }
-    "null".to_string()
+pub async fn get_most_popular_order(db: MyState) -> Value {
+    match sqlx::query("SELECT gift_name, SUM(quantity) as total_quantity FROM orders GROUP BY gift_name ORDER BY total_quantity DESC LIMIT 1")
+        .fetch_one(&db.pool)
+        .await
+    {
+        Ok(row) => Value::from(row.get::<String, _>("gift_name")),
+        Err(_) => Value::Null,
+    }
 }

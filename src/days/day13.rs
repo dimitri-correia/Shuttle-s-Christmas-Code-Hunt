@@ -3,6 +3,7 @@ use axum::http::StatusCode;
 use axum::routing::{get, post};
 use axum::{Json, Router};
 use serde::{Deserialize, Serialize};
+use serde_json::Value;
 
 use crate::db;
 use crate::db::structs::{MyState, Order};
@@ -54,13 +55,13 @@ async fn get_number_order(State(db): State<MyState>) -> (StatusCode, Json<Total>
     (StatusCode::OK, Json(Total { total }))
 }
 
-#[derive(Deserialize, Serialize)]
+#[derive(Deserialize, Serialize, Debug)]
 struct Popular {
-    popular: String,
+    popular: Value,
 }
 
 async fn get_popular_order(State(db): State<MyState>) -> (StatusCode, Json<Popular>) {
-    let popular: String = db::methods::get_most_popular_order(db).await;
+    let popular: Value = db::methods::get_most_popular_order(db).await;
 
     (StatusCode::OK, Json(Popular { popular }))
 }
