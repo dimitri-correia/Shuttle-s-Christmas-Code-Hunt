@@ -23,6 +23,10 @@ chrono = "0.4.31"
 shuttle-shared-db = { version = "0.35.2", features = ["postgres-rustls"] }
 sqlx = { version = "0.7.3", features = ["runtime-tokio-native-tls", "postgres"] }
 html-escape = "0.2.13"
+emojito = "0.3.5"
+digest = "0.11.0-pre.3"
+sha2 = "0.10.8"
+hex = "0.4.3"
 
 [dev-dependencies]
 cch23-validator = "22.0.0"

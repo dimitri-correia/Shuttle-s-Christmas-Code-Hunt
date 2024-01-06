@@ -2,6 +2,7 @@ use axum::http::StatusCode;
 use axum::routing::post;
 use axum::{Json, Router};
 use serde::{Deserialize, Serialize};
+use sha2::{Digest, Sha256};
 
 pub fn get_day_15_router() -> Router {
     Router::new()
@@ -42,7 +43,7 @@ async fn nice(Json(input): Json<Input>) -> (StatusCode, Json<Result>) {
 
 fn is_nice(input: &str) -> bool {
     const VOWELS: &str = "aeiouy";
-    const BAD_SUBSTRS: [&[u8]; 4] = [&[b'a', b'b'], &[b'c', b'd'], &[b'p', b'q'], &[b'x', b'y']];
+    const BAD_SUBSTRINGS: [&[u8]; 4] = [&[b'a', b'b'], &[b'c', b'd'], &[b'p', b'q'], &[b'x', b'y']];
 
     // Must contain at least three vowels (aeiouy),
     // at least one letter that appears twice in a row,
@@ -58,7 +59,7 @@ fn is_nice(input: &str) -> bool {
     let contains_bad_substring = input
         .as_bytes()
         .windows(2)
-        .any(|b| BAD_SUBSTRS.contains(&b));
+        .any(|b| BAD_SUBSTRINGS.contains(&b));
 
     at_least_3_vowels && letter_twice_in_a_row && !contains_bad_substring
 }
@@ -69,66 +70,129 @@ struct ResultWithReason {
     reason: String,
 }
 
-async fn game(Json(input): Json<Input>) -> (StatusCode, Json<ResultWithReason>) {
-    const RULE_BREAK: [(StatusCode, &str); 10] = [
-        (StatusCode::BAD_REQUEST, "8 chars"),
-        (StatusCode::BAD_REQUEST, "more types of chars"),
-        (StatusCode::BAD_REQUEST, "55555"),
-        (StatusCode::BAD_REQUEST, "math is hard"),
-        (StatusCode::NOT_ACCEPTABLE, "not joyful enough"), //406
-        (
-            StatusCode::UNAVAILABLE_FOR_LEGAL_REASONS,
-            "illegal: no sandwich",
-        ), //451
-        (StatusCode::RANGE_NOT_SATISFIABLE, "outranged"),  //416
-        (StatusCode::UPGRADE_REQUIRED, "😳"),              //426
-        (StatusCode::IM_A_TEAPOT, "not a coffee brewer"),  //418
-        (StatusCode::OK, "that's a nice password"),
-    ];
+#[derive(PartialEq, Eq)]
+enum RuleViolation {
+    Length,
+    UppercaseLowercaseDigit,
+    DigitsCount,
+    SumOfIntegers,
+    JOYOrder,
+    MirrorLetters,
+    UnicodeCharacter,
+    Emoji,
+    HashEndingWithA,
+    None,
+}
 
-    let rule_break = get_rule_break(input.input);
-
-    if let Some(rule_break) = rule_break {
-        (
-            RULE_BREAK[rule_break].0,
-            Json(ResultWithReason {
-                result: NAUGHTY.to_string(),
-                reason: RULE_BREAK[rule_break].1.to_string(),
-            }),
-        )
-    } else {
-        (
-            RULE_BREAK[9].0,
-            Json(ResultWithReason {
-                result: NICE.to_string(),
-                reason: RULE_BREAK[9].1.to_string(),
-            }),
-        )
+impl RuleViolation {
+    fn message(&self) -> (StatusCode, &str) {
+        match self {
+            RuleViolation::Length => (StatusCode::BAD_REQUEST, "8 chars"),
+            RuleViolation::UppercaseLowercaseDigit => {
+                (StatusCode::BAD_REQUEST, "more types of chars")
+            }
+            RuleViolation::DigitsCount => (StatusCode::BAD_REQUEST, "55555"),
+            RuleViolation::SumOfIntegers => (StatusCode::BAD_REQUEST, "math is hard"),
+            RuleViolation::JOYOrder => (StatusCode::NOT_ACCEPTABLE, "not joyful enough"), //406
+            RuleViolation::MirrorLetters => (
+                StatusCode::UNAVAILABLE_FOR_LEGAL_REASONS,
+                "illegal: no sandwich",
+            ), //451
+            RuleViolation::UnicodeCharacter => (StatusCode::RANGE_NOT_SATISFIABLE, "outranged"), //416
+            RuleViolation::Emoji => (StatusCode::UPGRADE_REQUIRED, "😳"), //426
+            RuleViolation::HashEndingWithA => (StatusCode::IM_A_TEAPOT, "not a coffee brewer"), //418
+            _ => (StatusCode::OK, "that's a nice password"),
+        }
     }
 }
 
-fn get_rule_break(input: String) -> Option<usize> {
+async fn game(Json(input): Json<Input>) -> (StatusCode, Json<ResultWithReason>) {
+    let rule_break = get_rule_break(input.input);
+    let rule_break_message = rule_break.message();
+
+    (
+        rule_break_message.0,
+        Json(ResultWithReason {
+            result: if rule_break == RuleViolation::None {
+                NICE.to_string()
+            } else {
+                NAUGHTY.to_string()
+            },
+            reason: rule_break_message.1.to_string(),
+        }),
+    )
+}
+
+fn get_rule_break(input: String) -> RuleViolation {
+    // Rule 1: must be at least 8 characters long
     if input.len() < 8 {
-        return Some(0);
+        return RuleViolation::Length;
     }
-    let uppercase = input.chars().find(|c| c.is_uppercase());
-    let lowercase = input.chars().find(|c| c.is_lowercase());
-    let digit = input.chars().find(char::is_ascii_digit);
-    if uppercase.is_none() || lowercase.is_none() || digit.is_none() {
-        return Some(1);
+    // Rule 2: must contain uppercase letters, lowercase letters, and digits
+    if !contain_upper_lower_digit(&input) {
+        return RuleViolation::UppercaseLowercaseDigit;
     }
+    // Rule 3: must contain at least 5 digits
     if input.chars().filter(char::is_ascii_digit).count() < 5 {
-        return Some(2);
+        return RuleViolation::DigitsCount;
     }
-    if check_sum_of_integers_to_be_2023(&input) {
-        return Some(3);
+    // Rule 4: all integers (sequences of consecutive digits) in the string must add up to 2023
+    if !check_sum_of_integers_to_be_2023(&input) {
+        return RuleViolation::SumOfIntegers;
     }
     // Rule 5: must contain the letters j, o, and y in that order and in no other order
+    if !contains_in_order(&input, ['j', 'o', 'y']) {
+        return RuleViolation::JOYOrder;
+    }
     // Rule 6: must contain a letter that repeats with exactly one other letter between them (like xyx)
+    if !contains_mirror(&input) {
+        return RuleViolation::MirrorLetters;
+    }
     // Rule 7: must contain at least one unicode character in the range [U+2980, U+2BFF]
+    if !contains_char_in_range(&input, '\u{2980}', '\u{2BFF}') {
+        return RuleViolation::UnicodeCharacter;
+    }
     // Rule 8: must contain at least one emoji
-    // Rule 9: the hexadecimal representation of the sha256 hash of the string must end with an a
-    None
+    if emojito::find_emoji(&input).is_empty() {
+        return RuleViolation::Emoji;
+    }
+    // Rule 9: the hexadecimal representation of the sha256 hash of the string must end with an 'a'
+    if !sha256_ends_with_a(&input) {
+        return RuleViolation::HashEndingWithA;
+    }
+    RuleViolation::None
+}
+
+fn sha256_ends_with_a(input: &str) -> bool {
+    let mut hasher = Sha256::new();
+    hasher.update(input.as_bytes());
+    let result = hasher.finalize();
+    hex::encode(result).ends_with('a')
+}
+
+fn contains_char_in_range(input: &str, start: char, end: char) -> bool {
+    input.chars().any(|c| (start..=end).contains(&c))
+}
+
+fn contains_mirror(input: &str) -> bool {
+    input
+        .as_bytes()
+        .windows(3)
+        .any(|str| str[0].is_ascii_alphabetic() && str[1].is_ascii_alphabetic() && str[0] == str[2])
+}
+
+fn contains_in_order(input: &str, letters: [char; 3]) -> bool {
+    if letters
+        .iter()
+        .any(|expected_char| input.chars().filter(|c| c == expected_char).count() > 1)
+    {
+        return false;
+    }
+
+    let mut chars = input.chars(); // will be consumed char by char
+    letters
+        .iter()
+        .all(|&expected_char| chars.any(|c| c == expected_char))
 }
 
 fn check_sum_of_integers_to_be_2023(input: &str) -> bool {
@@ -140,6 +204,13 @@ fn check_sum_of_integers_to_be_2023(input: &str) -> bool {
         }
     });
     2023 == a + b
+}
+
+fn contain_upper_lower_digit(input: &str) -> bool {
+    let uppercase = input.chars().find(|c| c.is_uppercase());
+    let lowercase = input.chars().find(|c| c.is_lowercase());
+    let digit = input.chars().find(char::is_ascii_digit);
+    uppercase.is_some() && lowercase.is_some() && digit.is_some()
 }
 
 #[cfg(test)]
@@ -184,17 +255,93 @@ mod tests {
     }
 
     #[test]
-    fn test_valid_input() {
+    fn test_check_sum_of_integers_to_be_2023() {
         assert!(check_sum_of_integers_to_be_2023("abc123xyz45pqr678stu1177"));
         assert!(check_sum_of_integers_to_be_2023("abc2000def0023"));
         assert!(check_sum_of_integers_to_be_2023("abc2023def"));
         assert!(check_sum_of_integers_to_be_2023("2023"));
-    }
-
-    #[test]
-    fn test_invalid_input() {
         assert!(!check_sum_of_integers_to_be_2023("abc"));
         assert!(!check_sum_of_integers_to_be_2023("2022"));
         assert!(!check_sum_of_integers_to_be_2023("a2b0c2d3e"));
+    }
+
+    #[test]
+    fn test_contains_j_o_y_in_order() {
+        fn contains_j_o_y_in_order(s: &str) -> bool {
+            contains_in_order(s, ['j', 'o', 'y'])
+        }
+
+        assert!(contains_j_o_y_in_order("joy"));
+        assert!(contains_j_o_y_in_order("0j1o2y3"));
+        assert!(contains_j_o_y_in_order("0joy1"));
+        assert!(!contains_j_o_y_in_order("yoj"));
+        assert!(!contains_j_o_y_in_order("jo"));
+        assert!(!contains_j_o_y_in_order("oy"));
+        assert!(!contains_j_o_y_in_order("oyj"));
+        assert!(!contains_j_o_y_in_order("joyjoy"));
+    }
+
+    #[test]
+    fn test_contains_mirror() {
+        assert!(contains_mirror("xyx"));
+        assert!(contains_mirror("qqxyxee"));
+        assert!(!contains_mirror("diid"));
+        assert!(!contains_mirror("dim"));
+        assert!(!contains_mirror("121"));
+        assert!(!contains_mirror("q2q"));
+    }
+
+    #[tokio::test]
+    async fn task2a() {
+        let app = get_day_15_router();
+
+        // Run the application for testing.
+        let server = TestServer::new(app).unwrap();
+
+        // Send the request.
+        let response = server
+            .post("/game")
+            .json(&json!({"input": "password"}))
+            .await;
+
+        response.assert_status(StatusCode::BAD_REQUEST);
+
+        response.assert_json(&json!({"result":"naughty","reason":"more types of chars"}));
+    }
+
+    #[tokio::test]
+    async fn task2b() {
+        let app = get_day_15_router();
+
+        // Run the application for testing.
+        let server = TestServer::new(app).unwrap();
+
+        // Send the request.
+        let response = server
+            .post("/game")
+            .json(&json!({"input": "Password12345"}))
+            .await;
+
+        response.assert_status(StatusCode::BAD_REQUEST);
+
+        response.assert_json(&json!({"result":"naughty","reason":"math is hard"}));
+    }
+
+    #[tokio::test]
+    async fn task2c() {
+        let app = get_day_15_router();
+
+        // Run the application for testing.
+        let server = TestServer::new(app).unwrap();
+
+        // Send the request.
+        let response = server
+            .post("/game")
+            .json(&json!({"input": "23jPassword2000y"}))
+            .await;
+
+        response.assert_status(StatusCode::UNAVAILABLE_FOR_LEGAL_REASONS);
+
+        response.assert_json(&json!({"result":"naughty","reason":"illegal: no sandwich"}));
     }
 }
