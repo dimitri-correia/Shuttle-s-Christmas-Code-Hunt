@@ -4,11 +4,11 @@ use sqlx::Row;
 use crate::db::structs::{MyState, Order};
 
 pub async fn reset(db: MyState) {
-    sqlx::query(include_str!("../../migrations/1_schema.sql"))
+    sqlx::query(include_str!("../../migrations/1_drop_orders.sql"))
         .execute(&db.pool)
         .await
         .unwrap();
-    sqlx::query(include_str!("../../migrations/2_schema.sql"))
+    sqlx::query(include_str!("../../migrations/2_create_orders.sql"))
         .execute(&db.pool)
         .await
         .unwrap();
