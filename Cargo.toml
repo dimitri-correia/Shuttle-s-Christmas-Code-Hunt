@@ -31,3 +31,4 @@ hex = "0.4.3"
 [dev-dependencies]
 cch23-validator = "22.0.0"
 axum-test = "14.2.2"
+serial_test = "2.0.0"

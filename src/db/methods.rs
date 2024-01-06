@@ -70,7 +70,7 @@ pub async fn insert_regions(db: MyState, data: Vec<Region>) {
 
 pub async fn get_number_region(db: MyState) -> Vec<(String, i64)> {
     sqlx::query_as(
-        "SELECT r.name AS region, SUM(o.quantity) AS total
+        "SELECT r.name AS region, SUM(o.quantity)
 FROM regions r
 LEFT JOIN orders o ON r.id = o.region_id
 GROUP BY r.name
@@ -80,4 +80,47 @@ ORDER BY r.name;",
     .fetch_all(&db.pool)
     .await
     .unwrap()
+}
+
+pub async fn get_top_gifts(db: MyState, nb_gifts: i32) -> Vec<(String, Option<String>)> {
+    if nb_gifts == 0 {
+        return get_no_top_gifts(&db).await;
+    }
+    sqlx::query_as(
+        "WITH RankedGifts AS (
+    SELECT
+        r.name AS region,
+        o.gift_name,
+        ROW_NUMBER() OVER (PARTITION BY r.id ORDER BY -SUM(o.quantity), o.gift_name) AS row_num
+    FROM
+        regions r
+            LEFT JOIN
+        orders o ON r.id = o.region_id
+    GROUP BY
+        r.name, o.gift_name, r.id
+)
+SELECT
+    region,
+    STRING_AGG(gift_name, ', ') AS all_gifts
+FROM
+    RankedGifts
+WHERE
+    row_num <= $1
+GROUP BY
+    region
+ORDER BY
+    region;
+",
+    )
+    .bind(nb_gifts)
+    .fetch_all(&db.pool)
+    .await
+    .unwrap()
+}
+
+async fn get_no_top_gifts(db: &MyState) -> Vec<(String, Option<String>)> {
+    sqlx::query_as("SELECT name, null FROM regions ORDER BY name")
+        .fetch_all(&db.pool)
+        .await
+        .unwrap()
 }
