@@ -197,6 +197,7 @@ async fn process_chat_message(
     ControlFlow::Continue(())
 }
 
+// TODO tests not working
 #[cfg(test)]
 mod tests {
     use std::{
