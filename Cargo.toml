@@ -30,6 +30,8 @@ hex = "0.4.3"
 futures = "0.3.30"
 tar = "0.4.40"
 bytes = "1.5.0"
+tempfile = "3.9.0"
+git2 = "0.18.1"
 
 [dev-dependencies]
 cch23-validator = "22.0.0"
