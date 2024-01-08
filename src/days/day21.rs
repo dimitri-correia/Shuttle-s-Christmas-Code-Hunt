@@ -81,6 +81,7 @@ async fn country(Path(binary): Path<String>, State(client): State<Client>) -> (S
 }
 
 async fn get_country_from_coordinates(lat: f64, lon: f64, client: Client) -> String {
+    // didnt worked with rust crates reverse_geocoder nor rgeo -> giving false countries (Belgium/Netherlands)
     let url = format!("https://nominatim.openstreetmap.org/reverse?lat={lat}&lon={lon}");
 
     let response = client
@@ -100,7 +101,7 @@ async fn get_country_from_coordinates(lat: f64, lon: f64, client: Client) -> Str
     Country::from_str(&country_code)
         .unwrap()
         .name()
-        .split_whitespace()
+        .split_whitespace() // needed for Brunei
         .next()
         .unwrap()
         .to_string()
