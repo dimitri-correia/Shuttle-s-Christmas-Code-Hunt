@@ -2,13 +2,16 @@ use axum::extract::Path;
 use axum::http::StatusCode;
 use axum::routing::get;
 use axum::Router;
+use rgeo::search;
 use s2::cell::Cell;
 use s2::cellid::CellID;
 
 use crate::days::day21::LatLong::{Lat, Long};
 
 pub fn get_day_21_router() -> Router {
-    Router::new().route("/coords/:binary", get(coords))
+    Router::new()
+        .route("/coords/:binary", get(coords))
+        .route("/country/:binary", get(country))
 }
 
 #[derive(Debug)]
@@ -61,6 +64,20 @@ fn from_deg(angle: f64, lat_long: LatLong) -> String {
     )
 }
 
+async fn country(Path(binary): Path<String>) -> (StatusCode, String) {
+    let center = Cell::from(CellID(u64::from_str_radix(&binary, 2).unwrap())).center();
+
+    (
+        StatusCode::OK,
+        get_country_from_coordinates(center.latitude().deg(), center.longitude().deg()),
+    )
+}
+
+fn get_country_from_coordinates(lat: f64, lon: f64) -> String {
+    let country = search(lat as f32, lon as f32).unwrap();
+    country.1.country.clone()
+}
+
 #[cfg(test)]
 mod tests {
     use axum::http::StatusCode;
@@ -100,5 +117,22 @@ mod tests {
         response.assert_status(StatusCode::OK);
 
         response.assert_text("18°54'55.944''S 47°31'17.976''E");
+    }
+
+    #[tokio::test]
+    async fn task2() {
+        let app = get_day_21_router();
+
+        // Run the application for testing.
+        let server = TestServer::new(app).unwrap();
+
+        // Send the request.
+        let response = server
+            .get("/country/0010000111110000011111100000111010111100000100111101111011000101")
+            .await;
+
+        response.assert_status(StatusCode::OK);
+
+        response.assert_text("Madagascar");
     }
 }
