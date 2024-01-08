@@ -5,16 +5,18 @@ use axum::http::StatusCode;
 use axum::routing::get;
 use axum::Router;
 use iso_country::Country;
-use reverse_geocoder::ReverseGeocoder;
+use reqwest::Client;
 use s2::cell::Cell;
 use s2::cellid::CellID;
 
 use crate::days::day21::LatLong::{Lat, Long};
 
 pub fn get_day_21_router() -> Router {
+    let client = Client::new();
     Router::new()
         .route("/coords/:binary", get(coords))
         .route("/country/:binary", get(country))
+        .with_state(client)
 }
 
 #[derive(Debug)]
@@ -67,18 +69,26 @@ fn from_deg(angle: f64, lat_long: LatLong) -> String {
     )
 }
 
-async fn country(Path(binary): Path<String>) -> (StatusCode, String) {
+async fn country(Path(binary): Path<String>, client: Client) -> (StatusCode, String) {
     let center = Cell::from(CellID(u64::from_str_radix(&binary, 2).unwrap())).center();
 
     (
         StatusCode::OK,
-        get_country_from_coordinates(center.latitude().deg(), center.longitude().deg()),
+        get_country_from_coordinates(center.latitude().deg(), center.longitude().deg(), client)
+            .await,
     )
 }
 
-fn get_country_from_coordinates(lat: f64, lon: f64) -> String {
-    let geocoder = ReverseGeocoder::new();
-    let country_code = geocoder.search((lat, lon)).record.clone().cc;
+async fn get_country_from_coordinates(lat: f64, lon: f64, client: Client) -> String {
+    let url = format!("https://nominatim.openstreetmap.org/reverse?lat={lat}&lon={lon}");
+
+    let response = client.get(&url).send().await.unwrap().text().await.unwrap();
+
+    let regex = regex::Regex::new(r".*<country_code>(.+)</country_code>.*").unwrap();
+
+    let (_, [country_code]): (&str, [&str; 1]) = regex.captures(&response).unwrap().extract();
+
+    let country_code = country_code.to_ascii_uppercase();
     let a = Country::from_str(&country_code)
         .unwrap()
         .name()
