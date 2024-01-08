@@ -1,6 +1,6 @@
 use std::str::FromStr;
 
-use axum::extract::Path;
+use axum::extract::{Path, State};
 use axum::http::StatusCode;
 use axum::routing::get;
 use axum::Router;
@@ -13,10 +13,11 @@ use crate::days::day21::LatLong::{Lat, Long};
 
 pub fn get_day_21_router() -> Router {
     let client = Client::new();
+    let router_with_client = Router::new().route("/", get(country)).with_state(client);
+
     Router::new()
         .route("/coords/:binary", get(coords))
-        .route("/country/:binary", get(country))
-        .with_state(client)
+        .nest("/country/:binary", router_with_client)
 }
 
 #[derive(Debug)]
@@ -69,7 +70,7 @@ fn from_deg(angle: f64, lat_long: LatLong) -> String {
     )
 }
 
-async fn country(Path(binary): Path<String>, client: Client) -> (StatusCode, String) {
+async fn country(Path(binary): Path<String>, State(client): State<Client>) -> (StatusCode, String) {
     let center = Cell::from(CellID(u64::from_str_radix(&binary, 2).unwrap())).center();
 
     (
@@ -82,22 +83,36 @@ async fn country(Path(binary): Path<String>, client: Client) -> (StatusCode, Str
 async fn get_country_from_coordinates(lat: f64, lon: f64, client: Client) -> String {
     let url = format!("https://nominatim.openstreetmap.org/reverse?lat={lat}&lon={lon}");
 
-    let response = client.get(&url).send().await.unwrap().text().await.unwrap();
+    let response = client
+        .get(&url)
+        .header("User-Agent", "shuttle_app")
+        .send()
+        .await
+        .unwrap()
+        .text()
+        .await
+        .unwrap();
 
-    let regex = regex::Regex::new(r".*<country_code>(.+)</country_code>.*").unwrap();
+    let country_code = extract_country_code(&response)
+        .unwrap()
+        .to_ascii_uppercase();
 
-    let (_, [country_code]): (&str, [&str; 1]) = regex.captures(&response).unwrap().extract();
-
-    let country_code = country_code.to_ascii_uppercase();
-    let a = Country::from_str(&country_code)
+    Country::from_str(&country_code)
         .unwrap()
         .name()
         .split_whitespace()
         .next()
         .unwrap()
-        .to_string();
-    dbg!(&a);
-    a
+        .to_string()
+}
+
+fn extract_country_code(response: &str) -> Option<&str> {
+    if let Some(start) = response.find("<country_code>") {
+        if let Some(end) = response[start..].find("</country_code>") {
+            return Some(&response[start + 14..start + end]);
+        }
+    }
+    None
 }
 
 #[cfg(test)]
