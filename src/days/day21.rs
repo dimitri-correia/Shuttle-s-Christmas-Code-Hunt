@@ -1,8 +1,11 @@
+use std::str::FromStr;
+
 use axum::extract::Path;
 use axum::http::StatusCode;
 use axum::routing::get;
 use axum::Router;
-use rgeo::search;
+use iso_country::Country;
+use reverse_geocoder::ReverseGeocoder;
 use s2::cell::Cell;
 use s2::cellid::CellID;
 
@@ -74,8 +77,17 @@ async fn country(Path(binary): Path<String>) -> (StatusCode, String) {
 }
 
 fn get_country_from_coordinates(lat: f64, lon: f64) -> String {
-    let country = search(lat as f32, lon as f32).unwrap();
-    country.1.country.clone()
+    let geocoder = ReverseGeocoder::new();
+    let country_code = geocoder.search((lat, lon)).record.clone().cc;
+    let a = Country::from_str(&country_code)
+        .unwrap()
+        .name()
+        .split_whitespace()
+        .next()
+        .unwrap()
+        .to_string();
+    dbg!(&a);
+    a
 }
 
 #[cfg(test)]

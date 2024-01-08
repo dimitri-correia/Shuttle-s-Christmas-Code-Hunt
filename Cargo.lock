@@ -351,6 +351,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "az"
+version = "1.2.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "7b7e4c2464d97fe331d41de9d5db0def0a96f4d823b8b32a2efd503578988973"
+
+[[package]]
 name = "backtrace"
 version = "0.3.69"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -489,8 +495,10 @@ dependencies = [
  "hex",
  "html-escape",
  "image",
+ "iso_country",
  "ordered-float",
  "reqwest",
+ "reverse_geocoder",
  "rgeo",
  "s2",
  "serde",
@@ -909,6 +917,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "divrem"
+version = "1.0.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "69dde51e8fef5e12c1d65e0929b03d66e4c0c18282bc30ed2ca050ad6f44dd82"
+
+[[package]]
 name = "doc-comment"
 version = "0.3.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -928,6 +942,12 @@ checksum = "a26ae43d7bcc3b814de94796a5e736d4029efb0ee900c12e2d54c993ad1a1e07"
 dependencies = [
  "serde",
 ]
+
+[[package]]
+name = "elapsed"
+version = "0.1.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "6f4e5af126dafd0741c2ad62d47f68b28602550102e5f0dd45c8a97fc8b49c29"
 
 [[package]]
 name = "emoji"
@@ -1041,6 +1061,19 @@ name = "finl_unicode"
 version = "1.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "8fcfdc7a0362c9f4444381a9e697c79d435fe65b52a37466fc2c1184cee9edc6"
+
+[[package]]
+name = "fixed"
+version = "1.24.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "02c69ce7e7c0f17aa18fdd9d0de39727adb9c6281f2ad12f57cbe54ae6e76e7d"
+dependencies = [
+ "az",
+ "bytemuck",
+ "half",
+ "num-traits",
+ "typenum",
+]
 
 [[package]]
 name = "flate2"
@@ -1209,6 +1242,19 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "54614a3312934d066701a80f20f15fa3b56d67ac7722b39eea5b4c9dd1d66c94"
 dependencies = [
  "thread_local",
+]
+
+[[package]]
+name = "generator"
+version = "0.7.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "5cc16584ff22b460a382b7feec54b23d2908d858152e5739a120b949293bd74e"
+dependencies = [
+ "cc",
+ "libc",
+ "log",
+ "rustversion",
+ "windows",
 ]
 
 [[package]]
@@ -1698,6 +1744,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "init_with"
+version = "1.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "0175f63815ce00183bf755155ad0cb48c65226c5d17a724e369c25418d2b7699"
+
+[[package]]
 name = "ipnet"
 version = "2.9.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1712,6 +1764,15 @@ dependencies = [
  "hermit-abi",
  "rustix",
  "windows-sys 0.48.0",
+]
+
+[[package]]
+name = "iso_country"
+version = "0.1.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "20633e788d3948ea7336861fdb09ec247f5dae4267e8f0743fa97de26c28624d"
+dependencies = [
+ "lazy_static",
 ]
 
 [[package]]
@@ -1806,6 +1867,32 @@ dependencies = [
  "num-traits",
  "serde",
  "serde_derive",
+]
+
+[[package]]
+name = "kiddo"
+version = "3.0.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "35808272ecb78a5610c70d5bc238ede78520200a4651c2c3fc59d64ba2bea28a"
+dependencies = [
+ "az",
+ "divrem",
+ "doc-comment",
+ "elapsed",
+ "fixed",
+ "generator",
+ "init_with",
+ "itertools 0.11.0",
+ "log",
+ "num-traits",
+ "ordered-float",
+ "rand 0.8.5",
+ "rand_chacha 0.3.1",
+ "rayon",
+ "sorted-vec",
+ "tracing",
+ "tracing-subscriber",
+ "ubyte",
 ]
 
 [[package]]
@@ -2830,6 +2917,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "reverse_geocoder"
+version = "4.0.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "dfc73703c95f229ae9c40c96d1e42b860a083bebfba66ea1005315ba6cb90de6"
+dependencies = [
+ "csv",
+ "kiddo 3.0.0",
+ "serde",
+ "serde_derive",
+]
+
+[[package]]
 name = "rgeo"
 version = "0.3.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2837,7 +2936,7 @@ checksum = "1b829e44388757014551a858cac25aa32d9d2dd6e2aac777e074e6152cd6aaab"
 dependencies = [
  "bincode",
  "csv",
- "kiddo",
+ "kiddo 0.2.5",
  "lazy_static",
  "num-traits",
  "serde",
@@ -3420,6 +3519,12 @@ dependencies = [
  "libc",
  "windows-sys 0.48.0",
 ]
+
+[[package]]
+name = "sorted-vec"
+version = "0.8.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c6734caf0b6f51addd5eeacca12fb39b2c6c14e8d4f3ac42f3a78955c0467458"
 
 [[package]]
 name = "spin"
@@ -4249,6 +4354,12 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "42ff0bf0c66b8238c6f3b578df37d0b7848e55df8577b3f74f92a69acceeb825"
 
 [[package]]
+name = "ubyte"
+version = "0.10.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f720def6ce1ee2fc44d40ac9ed6d3a59c361c80a75a7aa8e75bb9baed31cf2ea"
+
+[[package]]
 name = "ulid"
 version = "1.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -4575,6 +4686,15 @@ name = "winapi-x86_64-pc-windows-gnu"
 version = "0.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "712e227841d057c1ee1cd2fb22fa7e5a5461ae8e48fa2ca79ec42cfc1931183f"
+
+[[package]]
+name = "windows"
+version = "0.48.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e686886bc078bc1b0b600cac0147aadb815089b6e4da64016cbd754b6342700f"
+dependencies = [
+ "windows-targets 0.48.5",
+]
 
 [[package]]
 name = "windows-core"
