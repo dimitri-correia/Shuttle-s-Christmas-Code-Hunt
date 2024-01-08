@@ -18,6 +18,7 @@ use crate::days::day15::get_day_15_router;
 use crate::days::day18::get_day_18_router;
 use crate::days::day19::get_day_19_router;
 use crate::days::day20::get_day_20_router;
+use crate::days::day21::get_day_21_router;
 use crate::db::structs::MyState;
 
 mod days;
@@ -43,6 +44,7 @@ async fn main(#[shuttle_shared_db::Postgres] pool: PgPool) -> shuttle_axum::Shut
         .nest("/18", get_day_18_router(db.clone()))
         .nest("/19", get_day_19_router())
         .nest("/20", get_day_20_router())
+        .nest("/21", get_day_21_router())
         .fallback(fallback);
 
     info!("App ok");
