@@ -34,6 +34,7 @@ tempfile = "3.9.0"
 git2 = "0.18.1"
 s2 = "0.0.12"
 iso_country = "0.1.4"
+pathfinding = "4.8.1"
 
 [dev-dependencies]
 cch23-validator = "22.0.0"
