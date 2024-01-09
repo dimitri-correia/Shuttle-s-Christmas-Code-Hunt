@@ -76,8 +76,6 @@ async fn bake(jar: CookieJar) -> Json<BakeResult> {
             .collect::<Ingredients>()
     };
 
-    dbg!(&cookies, &pantry);
-
     Json(BakeResult { cookies, pantry })
 }
 
