@@ -12,13 +12,148 @@ see here https://console.shuttle.rs/cch
 
 ### when
 
-> The first challenge will be released on December 1, 12:00 UTC. A total of 16 challenges will be released each weekday
+> The first challenge will be released on December 1, 12:00 UTC. A total of 16 challenges will be released
 > between December 1 and December 22.
 
-#### Day -1: Get your winter boots on!
+### Comments
 
-#### Day 1: Packet "exclusive-cube" not found
+> Challenge done while learning the axum framework and rust.
+>
+> Extensive use of ".unwrap()' to not lose time on that here
 
-### Day 2 and 3 doesn't exist due to an issue on shuttle servers side
+<details>
+  <summary>Result of validator (100%)</summary>
+> dim@pop-os:~/RustroverProjects/shuttle-cch23$ cch23-validator --all
 
-#### Day 4: What do you call a serialized reindeer? Serdeer!
+
+⋆｡°✩ ⋆⁺｡˚⋆˙‧₊✩₊‧˙⋆˚｡⁺⋆ ✩°｡⋆°✩ ⋆⁺｡˚⋆˙‧₊✩₊‧˙⋆˚｡⁺⋆ ✩°｡⋆
+.・゜゜・・゜゜・． .・゜゜・・゜゜・．
+｡･ﾟﾟ･ SHUTTLE CCH23 VALIDATOR ･ﾟﾟ･｡
+.・゜゜・・゜゜・． .・゜゜・・゜゜・．
+⋆｡°✩ ⋆⁺｡˚⋆˙‧₊✩₊‧˙⋆˚｡⁺⋆ ✩°｡⋆°✩ ⋆⁺｡˚⋆˙‧₊✩₊‧˙⋆˚｡⁺⋆ ✩°｡⋆
+
+Validating Challenge -1...
+
+Task 1: completed 🎉
+Core tasks completed ✅
+Task 2: completed 🎉
+
+Validating Challenge 1...
+
+Task 1: completed 🎉
+Core tasks completed ✅
+Task 2: completed 🎉
+Bonus points: 100 ✨
+
+Validating Challenge 4...
+
+Task 1: completed 🎉
+Core tasks completed ✅
+Task 2: completed 🎉
+Bonus points: 150 ✨
+
+Validating Challenge 5...
+
+Task 1: completed 🎉
+Core tasks completed ✅
+Task 2: completed 🎉
+Bonus points: 150 ✨
+
+Validating Challenge 6...
+
+Task 1: completed 🎉
+Core tasks completed ✅
+Task 2: completed 🎉
+Bonus points: 200 ✨
+
+Validating Challenge 7...
+
+Task 1: completed 🎉
+Core tasks completed ✅
+Task 2: completed 🎉
+Bonus points: 120 ✨
+Task 3: completed 🎉
+Bonus points: 100 ✨
+
+Validating Challenge 8...
+
+Task 1: completed 🎉
+Core tasks completed ✅
+Task 2: completed 🎉
+Bonus points: 160 ✨
+
+Validating Challenge 11...
+
+Task 1: completed 🎉
+Core tasks completed ✅
+Task 2: completed 🎉
+Bonus points: 200 ✨
+
+Validating Challenge 12...
+
+Task 1: completed 🎉
+Core tasks completed ✅
+Task 2: completed 🎉
+Bonus points: 100 ✨
+Task 3: completed 🎉
+Bonus points: 200 ✨
+
+Validating Challenge 13...
+
+Task 1: completed 🎉
+Task 2: completed 🎉
+Core tasks completed ✅
+Task 3: completed 🎉
+Bonus points: 100 ✨
+
+Validating Challenge 14...
+
+Task 1: completed 🎉
+Core tasks completed ✅
+Task 2: completed 🎉
+Bonus points: 100 ✨
+
+Validating Challenge 15...
+
+Task 1: completed 🎉
+Core tasks completed ✅
+Task 2: completed 🎉
+Bonus points: 400 ✨
+
+Validating Challenge 18...
+
+Task 1: completed 🎉
+Core tasks completed ✅
+Task 2: completed 🎉
+Bonus points: 600 ✨
+
+Validating Challenge 19...
+
+Task 1: completed 🎉
+Core tasks completed ✅
+Task 2: completed 🎉
+Bonus points: 500 ✨
+
+Validating Challenge 20...
+
+Task 1: completed 🎉
+Core tasks completed ✅
+Task 2: completed 🎉
+Bonus points: 350 ✨
+
+Validating Challenge 21...
+
+Task 1: completed 🎉
+Core tasks completed ✅
+Task 2: completed 🎉
+Bonus points: 300 ✨
+
+Validating Challenge 22...
+
+Task 1: completed 🎉
+Core tasks completed ✅
+Task 2: completed 🎉
+Bonus points: 600 ✨
+
+Completed 17 challenges and gathered a total of 4430 bonus points.
+</details>
