@@ -4,6 +4,12 @@ use axum::{Json, Router};
 use ordered_float::OrderedFloat;
 use serde::{Deserialize, Serialize};
 
+pub fn get_day_4_router() -> Router {
+    Router::new()
+        .route("/strength", post(strength))
+        .route("/contest", post(contest))
+}
+
 #[derive(Deserialize, Debug)]
 struct Reindeer {
     name: String,
@@ -81,12 +87,6 @@ where
         .iter()
         .max_by_key(|&r| OrderedFloat(key_fn(r)))
         .unwrap()
-}
-
-pub fn get_day_4_router() -> Router {
-    Router::new()
-        .route("/strength", post(strength))
-        .route("/contest", post(contest))
 }
 
 #[cfg(test)]

@@ -17,12 +17,14 @@ struct Res {
 }
 
 async fn count_elves(body: String) -> impl IntoResponse {
+    const WINDOW_LENGTH: usize = "elf on a shelf".len();
+
     let elf = body.matches("elf").count();
     let shelf = body.matches("shelf").count();
     let elf_on_a_shelf = body
         .chars()
         .collect::<Vec<_>>()
-        .windows("elf on a shelf".len())
+        .windows(WINDOW_LENGTH)
         .filter(|window| window.iter().collect::<String>() == "elf on a shelf")
         .count();
     let shelf_with_no_elf_on_it = shelf - elf_on_a_shelf;

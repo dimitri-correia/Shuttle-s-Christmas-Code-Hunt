@@ -10,44 +10,35 @@ pub fn get_day_5_router() -> Router {
 
 #[derive(Deserialize, Debug)]
 struct Pagination {
-    #[serde(default = "default_offset")]
-    offset: usize,
-    #[serde(default = "default_limit")]
-    limit: usize,
-    #[serde(default = "default_split")]
-    split: usize,
-}
-
-fn default_offset() -> usize {
-    0
-}
-
-fn default_limit() -> usize {
-    0
-}
-
-fn default_split() -> usize {
-    0
+    offset: Option<usize>,
+    limit: Option<usize>,
+    split: Option<usize>,
 }
 
 async fn slicing_the_loop(
     pagination: Query<Pagination>,
     names: Json<Vec<String>>,
 ) -> impl IntoResponse {
-    let start = pagination.offset;
+    if names.is_empty() {
+        return Json(names.0).into_response();
+    }
+    let limit = pagination.limit.unwrap_or(names.len());
 
-    let end = if pagination.limit == 0 {
-        names.len()
-    } else {
-        start + pagination.limit
-    };
+    if limit == 0 {
+        let empty: Vec<String> = vec![];
+        return Json(empty).into_response();
+    }
 
-    if pagination.split == 0 {
+    let start = pagination.offset.unwrap_or(0);
+
+    let end = std::cmp::min(start + limit, names.len());
+
+    if pagination.split.unwrap_or(0) == 0 {
         Json(&names[start..end]).into_response()
     } else {
         Json(
             &names[start..end]
-                .chunks(pagination.split)
+                .chunks(pagination.split.unwrap())
                 .collect::<Vec<_>>(),
         )
         .into_response()
