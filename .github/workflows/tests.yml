@@ -33,7 +33,7 @@ jobs:
           ./test_db.sh
       - name: Run the app
         run: |
-          curl -sSfL https://www.shuttle.rs/install | bash
+          cargo install cargo-shuttle
           cargo shuttle run
           sleep 10
       - name: Run cch23-validator
