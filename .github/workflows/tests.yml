@@ -34,10 +34,8 @@ jobs:
       - name: Run the app
         run: |
           cargo install cargo-shuttle
-          cargo shuttle run
+          cargo shuttle run &
           sleep 10
-      - name: Run cch23-validator
-        run: |
           cargo install cch23-validator
           cch23-validator --all
 
