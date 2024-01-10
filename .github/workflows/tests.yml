@@ -14,7 +14,8 @@ jobs:
       - uses: dtolnay/rust-toolchain@stable
       - uses: Swatinem/rust-cache@v2
       - name: Install db
-        run:
+        run: |
+          chmod +x ./test_db.sh
           ./test_db.sh
       - name: Run tests
         run: cargo test
@@ -29,7 +30,14 @@ jobs:
       - name: Install db
         run: ./test_db.sh
       - name: Run the app
-        run: curl -sSfL https://www.shuttle.rs/install | bash
+        run: |
+          curl -sSfL https://www.shuttle.rs/install | bash
+          cargo shuttle run
+          sleep 10
+      - name: Run cch23-validator
+        run: |
+          cargo install cch23-validator
+          cch23-validator --all
 
   fmt:
     name: Rustfmt
