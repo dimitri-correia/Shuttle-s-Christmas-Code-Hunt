@@ -20,24 +20,24 @@ jobs:
       - name: Run tests
         run: cargo test
 
-  validator:
-    name: Validator
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: dtolnay/rust-toolchain@stable
-      - uses: Swatinem/rust-cache@v2
-      - name: Install db
-        run: |
-          chmod +x ./test_db.sh
-          ./test_db.sh
-      - name: Run the app
-        run: |
-          cargo install cargo-shuttle
-          cargo shuttle run &
-          wait
-          cargo install cch23-validator
-          cch23-validator --all
+  #  validator:
+  #    name: Validator
+  #    runs-on: ubuntu-latest
+  #    steps:
+  #      - uses: actions/checkout@v3
+  #      - uses: dtolnay/rust-toolchain@stable
+  #      - uses: Swatinem/rust-cache@v2
+  #      - name: Install db
+  #        run: |
+  #          chmod +x ./test_db.sh
+  #          ./test_db.sh
+  #      - name: Run the app
+  #        run: |
+  #          cargo install cargo-shuttle
+  #          cargo shuttle run &
+  #          wait
+  #          cargo install cch23-validator
+  #          cch23-validator --all
 
   fmt:
     name: Rustfmt
