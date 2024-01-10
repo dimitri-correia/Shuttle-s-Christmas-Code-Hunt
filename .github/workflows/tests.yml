@@ -35,7 +35,7 @@ jobs:
         run: |
           cargo install cargo-shuttle
           cargo shuttle run &
-          sleep 10
+          wait
           cargo install cch23-validator
           cch23-validator --all
 
