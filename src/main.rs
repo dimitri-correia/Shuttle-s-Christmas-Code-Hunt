@@ -1,7 +1,6 @@
 use axum::http::{StatusCode, Uri};
 use axum::Router;
 use sqlx::PgPool;
-use tracing::info;
 
 use crate::days::day00::get_day_0_router;
 use crate::days::day01::get_day_1_router;
@@ -48,8 +47,6 @@ async fn main(#[shuttle_shared_db::Postgres] pool: PgPool) -> shuttle_axum::Shut
         .nest("/21", get_day_21_router())
         .nest("/22", get_day_22_router())
         .fallback(fallback);
-
-    info!("App ok");
 
     Ok(router.into())
 }

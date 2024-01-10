@@ -6,12 +6,17 @@ edition = "2021"
 [dependencies]
 axum = { version = "0.7.3", features = ["multipart", "ws"] }
 axum-extra = { version = "0.9.1", features = ["cookie"] }
-shuttle-axum = { version = "0.35.2", default-features = false, features = ["axum-0-7"] }
-shuttle-runtime = "0.35.2"
-tokio = "1.35.1"
-tracing = "0.1.40"
+
+shuttle-axum = { version = "0.36.0" }
+shuttle-runtime = "0.36.0"
+shuttle-shared-db = { version = "0.36.0", features = ["postgres-rustls"] }
+
 serde = { version = "1.0.195", features = ["derive"] }
 serde_json = "1.0.111"
+
+sqlx = { version = "0.7.3", features = ["runtime-tokio-native-tls", "postgres"] }
+
+tokio = "1.35.1"
 ordered-float = "4.2.0"
 base64 = "0.21.6"
 reqwest = "0.11.23"
@@ -20,8 +25,6 @@ image = "0.24.7"
 ulid = "1.1.0"
 uuid = "1.6.1"
 chrono = "0.4.31"
-shuttle-shared-db = { version = "0.35.2", features = ["postgres-rustls"] }
-sqlx = { version = "0.7.3", features = ["runtime-tokio-native-tls", "postgres"] }
 html-escape = "0.2.13"
 emojito = "0.3.5"
 digest = "0.11.0-pre.3"
