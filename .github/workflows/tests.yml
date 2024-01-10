@@ -1,0 +1,75 @@
+name: Rust
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  rust-tests:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      - name: Install db
+        run:
+          ./test_db.sh
+      - name: Run tests
+        run: cargo test
+
+  validator:
+    name: Validator
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      - name: Install db
+        run:
+          ./test_db.sh
+      - name: Run the app
+        run:
+          curl -sSfL https://www.shuttle.rs/install | bash
+          cargo shuttle run
+          sleep 10
+          cargo install cch23-validator
+          cch23-validator --all
+
+  fmt:
+    name: Rustfmt
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt
+      - name: Enforce formatting
+        run: cargo fmt --check
+
+  clippy:
+    name: Clippy
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy
+      - uses: Swatinem/rust-cache@v2
+        run: cargo clippy -- -D warnings
+
+  coverage:
+    name: Code coverage
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - uses: dtolnay/rust-toolchain@stable
+      - name: Install libpq
+        run: sudo apt-get update && sudo apt-get install postgresql-client -y
+      - uses: Swatinem/rust-cache@v2
+      - name: Install tarpaulin
+        run: cargo install cargo-tarpaulin
+      - name: Generate code coverage
+        run: cargo tarpaulin --verbose --workspace
