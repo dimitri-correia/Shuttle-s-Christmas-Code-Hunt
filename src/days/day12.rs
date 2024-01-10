@@ -57,7 +57,7 @@ async fn ulids(Json(payload): Json<Vec<String>>) -> (StatusCode, Json<Vec<String
 }
 
 #[derive(Serialize, Deserialize)]
-struct LSB {
+struct Lsb {
     #[serde(rename = "christmas eve")]
     christmas_eve: usize,
     weekday: usize,
@@ -70,7 +70,7 @@ struct LSB {
 async fn analyze_ulids(
     Path(week_day): Path<u32>,
     Json(payload): Json<Vec<String>>,
-) -> (StatusCode, Json<LSB>) {
+) -> (StatusCode, Json<Lsb>) {
     let (lsb, christmas_eve, weekday, in_future) = payload
         .iter()
         .map(|id| Ulid::from_string(id).unwrap())
@@ -103,7 +103,7 @@ async fn analyze_ulids(
 
     (
         StatusCode::OK,
-        Json(LSB {
+        Json(Lsb {
             christmas_eve,
             weekday,
             in_future,

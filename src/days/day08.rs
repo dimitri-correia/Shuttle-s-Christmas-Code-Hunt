@@ -38,8 +38,7 @@ async fn get_weight_in_kilo(poke_number: i32, client: Client) -> f64 {
     {
         let data: Value = serde_json::from_str(&response.text().await.unwrap()).unwrap();
         let weight_in_hectogram = data.get("weight").unwrap();
-        let weight_in_kilogram = weight_in_hectogram.as_f64().unwrap() / 10.0;
-        weight_in_kilogram
+        weight_in_hectogram.as_f64().unwrap() / 10.0 // weight_in_kilogram
     } else {
         0.0
     };
