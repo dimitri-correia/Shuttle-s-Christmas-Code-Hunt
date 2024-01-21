@@ -4,6 +4,8 @@
 
 see here https://console.shuttle.rs/cch
 
+and now also here https://github.com/shuttle-hq/shuttlings
+
 ### what
 
 > Shuttle's Christmas Code Hunt, inspired by Advent of Code, invites you to solve daily challenges using Rust in a
@@ -12,12 +14,12 @@ see here https://console.shuttle.rs/cch
 
 ### when
 
-> The first challenge will be released on December 1, 12:00 UTC. A total of 16 challenges will be released
-> between December 1 and December 22.
+> The first challenge will be released on December 1, 12:00 UTC.
+> A total of 16 challenges will be release.
 
 ### Comments
 
-> Challenge done while learning the axum framework and rust.
+> Challenge done while learning the axum framework and rust itself.
 >
 > Extensive use of ".unwrap()' to not lose time on that here
 
