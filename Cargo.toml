@@ -19,7 +19,7 @@ sqlx = { version = "0.7.3", features = ["runtime-tokio-native-tls", "postgres"] 
 tokio = "1.35.1"
 ordered-float = "4.2.0"
 base64 = "0.21.6"
-reqwest = "0.11.23"
+reqwest = "0.11.26"
 tower-http = { version = "0.5.0", features = ["fs"] }
 image = "0.24.7"
 ulid = "1.1.0"
